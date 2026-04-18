@@ -1,0 +1,145 @@
+<?php
+/**
+ * @var \WebSupportDesk\SystemLogs\Block\Adminhtml\Logs\Index $block
+ */
+$files = $block->getFiles();
+$contentUrl = $block->escapeUrl($block->getContentUrl());
+$clearUrl = $block->escapeUrl($block->getClearUrl());
+$formKey = $block->escapeHtmlAttr($block->getFormKeyValue());
+?>
+<div class="wsd-systemlogs">
+    <div class="admin__fieldset" style="margin-bottom: 1.5rem;">
+        <div class="wsd-systemlogs-toolbar"
+             style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;">
+            <div class="wsd-systemlogs-toolbar__file" style="flex: 1 1 18rem; min-width: 12rem; max-width: 48rem;">
+                <label class="admin__field-label" for="wsd_systemlogs_file" style="display: block; margin-bottom: 0.35rem;">
+                    <span><?= $block->escapeHtml(__('Log file (var/log)')) ?></span>
+                </label>
+                <div class="admin__field-control">
+                    <select id="wsd_systemlogs_file" class="admin__control-select" style="width: 100%;">
+                        <option value=""><?= $block->escapeHtml(__('— Select —')) ?></option>
+                        <?php foreach ($files as $row): ?>
+                            <option value="<?= $block->escapeHtmlAttr($row['name']) ?>"
+                                    data-first="<?= $block->escapeHtmlAttr($row['first_seen']) ?>"
+                                    data-last="<?= $block->escapeHtmlAttr($row['last_seen']) ?>"
+                                    data-cleared="<?= $block->escapeHtmlAttr((string)($row['last_cleared_at'] ?? '')) ?>">
+                                <?= $block->escapeHtml($row['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="wsd-systemlogs-toolbar__actions"
+                 style="flex: 0 0 auto; margin-left: auto; text-align: right; align-self: flex-start; padding-top: 1.5rem;">
+                <button type="button" class="action-default" id="wsd_systemlogs_refresh">
+                    <span><?= $block->escapeHtml(__('Load / refresh')) ?></span>
+                </button>
+                <button type="button" class="action-secondary" id="wsd_systemlogs_clear" style="margin-left: 0.5rem;">
+                    <span><?= $block->escapeHtml(__('Empty this log file')) ?></span>
+                </button>
+            </div>
+        </div>
+        <div id="wsd_systemlogs_meta" class="message message-notice" style="margin-top: 0; display: none;">
+            <div></div>
+        </div>
+    </div>
+
+    <div class="admin__fieldset">
+        <div class="admin__field-label">
+            <span><?= $block->escapeHtml(__('Output')) ?></span>
+        </div>
+        <pre id="wsd_systemlogs_output"
+             style="background: #fff; border: 1px solid #ccc; padding: 1rem; max-height: 520px; overflow: auto; white-space: pre-wrap; font-size: 12px;"></pre>
+        <p class="admin__field-note" id="wsd_systemlogs_note"></p>
+    </div>
+</div>
+
+<script>
+require(['jquery'], function ($) {
+    'use strict';
+
+    var contentUrl = '<?= /* @noEscape */ $contentUrl ?>';
+    var clearUrl = '<?= /* @noEscape */ $clearUrl ?>';
+    var formKey = '<?= /* @noEscape */ $formKey ?>';
+
+    function showMeta($select) {
+        var $opt = $select.find('option:selected');
+        var $box = $('#wsd_systemlogs_meta');
+        if (!$opt.val()) {
+            $box.hide();
+            return;
+        }
+        var html = '<strong><?= $block->escapeJs(__('Registered metadata')) ?>:</strong><br/>' +
+            '<?= $block->escapeJs(__('First seen')) ?>: ' + $opt.data('first') + '<br/>' +
+            '<?= $block->escapeJs(__('Last seen')) ?>: ' + $opt.data('last') + '<br/>' +
+            '<?= $block->escapeJs(__('Last cleared')) ?>: ' + ($opt.data('cleared') || '—');
+        $box.show().find('div').html(html);
+    }
+
+    function loadContent() {
+        var file = $('#wsd_systemlogs_file').val();
+        $('#wsd_systemlogs_output').text('<?= $block->escapeJs(__('Loading…')) ?>');
+        $('#wsd_systemlogs_note').text('');
+        if (!file) {
+            $('#wsd_systemlogs_output').text('');
+            return;
+        }
+        $.ajax({
+            url: contentUrl,
+            type: 'GET',
+            dataType: 'json',
+            data: { file: file },
+            showLoader: true
+        }).done(function (data) {
+            if (data.success) {
+                $('#wsd_systemlogs_output').text(data.content || '');
+                $('#wsd_systemlogs_note').text(
+                    '<?= $block->escapeJs(__('Size')) ?>: ' + (data.size || 0) + ' <?= $block->escapeJs(__('bytes')) ?> — <?= $block->escapeJs(__('full file')) ?>.'
+                );
+            } else {
+                $('#wsd_systemlogs_output').text(data.message || 'Error');
+            }
+        }).fail(function () {
+            $('#wsd_systemlogs_output').text('<?= $block->escapeJs(__('Request failed.')) ?>');
+        });
+    }
+
+    $('#wsd_systemlogs_file').on('change', function () {
+        showMeta($(this));
+        loadContent();
+    });
+
+    $('#wsd_systemlogs_refresh').on('click', function () {
+        loadContent();
+    });
+
+    $('#wsd_systemlogs_clear').on('click', function () {
+        var file = $('#wsd_systemlogs_file').val();
+        if (!file) {
+            return;
+        }
+        if (!window.confirm('<?= $block->escapeJs(__('Empty this log file? This cannot be undone.')) ?>')) {
+            return;
+        }
+        $.ajax({
+            url: clearUrl,
+            type: 'POST',
+            dataType: 'json',
+            data: { file: file, form_key: formKey },
+            showLoader: true
+        }).done(function (data) {
+            if (data.success) {
+                $('#wsd_systemlogs_output').text('');
+                $('#wsd_systemlogs_note').text(data.message || '');
+                window.location.reload();
+            } else {
+                alert(data.message || 'Error');
+            }
+        }).fail(function () {
+            alert('<?= $block->escapeJs(__('Request failed.')) ?>');
+        });
+    });
+
+    showMeta($('#wsd_systemlogs_file'));
+});
+</script>

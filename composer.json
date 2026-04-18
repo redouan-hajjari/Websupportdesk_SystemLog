@@ -1,0 +1,19 @@
+{
+    "name": "websupportdesk/module-system-logs",
+    "description": "Magento 2 admin: browse var/log files, sync metadata with dates, clear logs",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Redouan Hajjari",
+            "email": "redouanhajjari@gmail.com"
+        }
+    ],
+    "license": ["OSL-3.0", "AFL-3.0"],
+    "autoload": {
+        "files": ["registration.php"],
+        "psr-4": {
+            "WebSupportDesk\\SystemLogs\\": ""
+        }
+    }
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="WebSupportDesk_SystemLogs::logs"
+             title="System Logs"
+             translate="title"
+             module="WebSupportDesk_SystemLogs"
+             sortOrder="95"
+             parent="Magento_Backend::system_tools"
+             action="wsd_systemlogs/logs/index"
+             resource="WebSupportDesk_SystemLogs::systemlogs"/>
+    </menu>
+</config>

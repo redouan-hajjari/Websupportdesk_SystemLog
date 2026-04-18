@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="websupportdesk" translate="label" sortOrder="400">
+            <label>WebSupportDesk</label>
+        </tab>
+        <section id="websupportdesk_systemlogs" translate="label" sortOrder="30"
+                 showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>System Logs</label>
+            <tab>websupportdesk</tab>
+            <resource>WebSupportDesk_SystemLogs::config</resource>
+            <group id="general" translate="label" sortOrder="10"
+                   showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Enable System Logs viewer</label>
+                    <comment>When disabled, the admin page under System → Tools → System Logs and its API are unavailable.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
