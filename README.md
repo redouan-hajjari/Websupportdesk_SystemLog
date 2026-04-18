@@ -18,6 +18,14 @@ bin/magento setup:upgrade
 bin/magento cache:flush
 ```
 
+### Donatie
+
+Vind je deze module handig? Een vrijwillige bijdrage wordt gewaardeerd.
+
+- **IBAN:** `NL12 BUNQ 2150 2834 33`
+- **Tenaamstelling:** `R.Hajjari`
+- **Contact:** [redouanhajjari@gmail.com](mailto:redouanhajjari@gmail.com?subject=Donatie%20WebSupportDesk_SystemLogs)
+
 ---
 
 ## English
@@ -37,3 +45,15 @@ bin/magento module:enable WebSupportDesk_SystemLogs
 bin/magento setup:upgrade
 bin/magento cache:flush
 ```
+
+### Donation
+
+If you find this module useful, a voluntary contribution is appreciated.
+
+- **IBAN:** `NL12 BUNQ 2150 2834 33`
+- **Account holder:** `R.Hajjari`
+- **Contact:** [redouanhajjari@gmail.com](mailto:redouanhajjari@gmail.com?subject=Donation%20WebSupportDesk_SystemLogs)
+
+---
+
+Package: `websupportdesk/module-system-logs` · License: OSL-3.0 / AFL-3.0
