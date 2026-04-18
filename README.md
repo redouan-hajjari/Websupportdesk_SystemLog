@@ -56,4 +56,4 @@ If you find this module useful, a voluntary contribution is appreciated.
 
 ---
 
-Package: `websupportdesk/module-system-logs` · License: OSL-3.0 / AFL-3.0
+Package: `websupportdesk/module-system-logs` · License: OSL-3.0 / AFL-3.0 · Source: [github.com/redouan-hajjari/Websupportdesk_SystemLog](https://github.com/redouan-hajjari/Websupportdesk_SystemLog)
